@@ -120,6 +120,22 @@ class CLI
         return $params;
     }
 
+    public function parseParse()
+    {
+        $longopts = [
+            'help',
+            'query:',
+            'context:',
+        ];
+        $params = $this->getopt(
+            'hq:c:',
+            $longopts
+        );
+        $this->mergeLongOpts($params, $longopts);
+
+        return $params;
+    }
+
     public function runLint()
     {
         $params = $this->parseLint();
@@ -209,6 +225,32 @@ class CLI
                 echo "\n";
                 echo "\n";
             }
+
+            return 0;
+        }
+        echo "ERROR: Missing parameters!\n";
+        $this->usageTokenize();
+
+        return 1;
+    }
+
+    public function runParse()
+    {
+        $params = $this->parseParse();
+        if ($params === false) {
+            return 1;
+        }
+        if (isset($params['h'])) {
+            $this->usageTokenize();
+
+            return 0;
+        }
+        if (!isset($params['q']) && $stdIn = $this->readStdin()) {
+            $params['q'] = $stdIn;
+        }
+        if (isset($params['q'])) {
+            $parser = new Parser($params['q'], false);
+            echo json_encode($parser->statements);
 
             return 0;
         }

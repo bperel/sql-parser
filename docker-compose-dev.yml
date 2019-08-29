@@ -1,0 +1,10 @@
+version: '2.4'
+services:
+  sql-parser:
+    container_name: sql-parser
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    volumes:
+    - .:/var/www/html:z
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
